@@ -1,0 +1,37 @@
+{
+  "name": "sme-ai-survival-guide",
+  "version": "1.0.0",
+  "description": "中小企业AI时代生存指北 - 帮助中小企业在AI时代找到生存和发展之道",
+  "main": "index.js",
+  "scripts": {
+    "install-gitbook": "npm install -g gitbook-cli",
+    "install-plugins": "gitbook install",
+    "serve": "gitbook serve",
+    "build": "gitbook build",
+    "pdf": "gitbook pdf ./ ./sme-ai-guide.pdf",
+    "epub": "gitbook epub ./ ./sme-ai-guide.epub",
+    "mobi": "gitbook mobi ./ ./sme-ai-guide.mobi",
+    "start": "npm run serve",
+    "deploy": "npm run build && echo 'Ready to deploy _book folder'"
+  },
+  "keywords": [
+    "AI",
+    "人工智能",
+    "中小企业",
+    "数字化转型",
+    "GitBook"
+  ],
+  "author": "Your Name",
+  "license": "CC-BY-NC-SA-4.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/sme-ai-survival-guide.git"
+  },
+  "dependencies": {
+    "gitbook-cli": "^2.3.2"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=10.0.0"
+  }
+}
