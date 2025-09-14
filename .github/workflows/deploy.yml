@@ -24,38 +24,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         
-      - name: Setup Node.js 
-        uses: actions/setup-node@v4
-        with:
-          node-version: '14'
-          
-      - name: Install GitBook CLI
+      - name: Prepare deployment directory
         run: |
-          npm install -g gitbook-cli@2.3.2
-          gitbook fetch 3.2.3
-          gitbook --version || echo "GitBook CLI installed"
+          echo "Preparing static files for deployment..."
+          mkdir -p docs
           
-      - name: Install GitBook plugins
-        run: |
-          gitbook install || echo "No plugins to install"
+          # Copy all markdown files
+          cp -r *.md docs/
+          cp -r part* docs/ 2>/dev/null || true
+          cp -r appendix docs/ 2>/dev/null || true
+          cp -r assets docs/ 2>/dev/null || true
           
-      - name: Build GitBook
-        run: |
-          gitbook build . ./docs || echo "GitBook build failed, using fallback"
-          # 如果GitBook构建失败，复制源文件作为备份
-          if [ ! -d "./docs" ]; then
-            echo "GitBook build failed, copying source files..."
-            mkdir -p docs
-            cp -r *.md docs/
-            cp -r part* docs/ 2>/dev/null || true
-            cp -r appendix docs/ 2>/dev/null || true
-            cp -r assets docs/ 2>/dev/null || true
-            cp index.html docs/index.html
-          fi
-          # 确保有index.html
-          if [ ! -f "./docs/index.html" ]; then
-            cp index.html docs/index.html 2>/dev/null || echo "No index.html to copy"
-          fi
+          # Copy HTML and JSON files
+          cp index.html docs/index.html
+          cp book.json docs/book.json 2>/dev/null || true
+          cp package.json docs/package.json 2>/dev/null || true
+          
+          # Copy .nojekyll to prevent Jekyll processing
+          cp .nojekyll docs/.nojekyll 2>/dev/null || true
+          
+          echo "Files prepared for deployment:"
           ls -la docs/
           
       - name: Setup Pages
