@@ -200,9 +200,26 @@ function buildNavigation() {
         if (line.includes('* [')) {
             const match = line.match(/\* \[(.+?)\]\((.+?)\)/);
             if (match) {
-                const [_, title, path] = match;
-                const htmlPath = path.replace('.md', '.html').replace('README', 'index');
+                const [_, title, mdPath] = match;
                 const indent = line.match(/^(\s*)/)[1].length;
+                
+                // 检查文件是否存在
+                const fullPath = path.join(__dirname, mdPath);
+                let htmlPath;
+                
+                if (fs.existsSync(fullPath)) {
+                    // 文件存在，使用实际路径
+                    htmlPath = mdPath.replace('.md', '.html').replace('README', 'index');
+                } else {
+                    // 文件不存在，链接到该章节的主页
+                    const chapterMatch = mdPath.match(/part\d+\/chapter\d+\//);
+                    if (chapterMatch) {
+                        htmlPath = chapterMatch[0] + 'index.html';
+                    } else {
+                        // 默认链接到首页
+                        htmlPath = 'index.html';
+                    }
+                }
                 
                 if (indent === 0) {
                     nav += `<li class="section-title">${title}</li>`;
