@@ -207,7 +207,7 @@ function buildNavigation() {
                 if (indent === 0) {
                     nav += `<li class="section-title">${title}</li>`;
                 } else {
-                    nav += `<li style="margin-left: ${indent * 10}px"><a href="/${htmlPath}">${title}</a></li>`;
+                    nav += `<li style="margin-left: ${indent * 10}px"><a href="/sme-ai-survival-guide/${htmlPath}">${title}</a></li>`;
                 }
             }
         }
