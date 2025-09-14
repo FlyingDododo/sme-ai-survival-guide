@@ -3,17 +3,15 @@
   "author": "作者名称",
   "description": "帮助中小企业在AI时代找到生存和发展之道的实用指南",
   "language": "zh-hans",
-  "gitbook": ">=3.0.0",
+  "gitbook": "3.2.3",
   "structure": {
     "readme": "README.md",
     "summary": "SUMMARY.md"
   },
   "plugins": [
     "-sharing",
-    "expandable-chapters",
-    "back-to-top-button",
-    "code",
-    "splitter"
+    "-lunr",
+    "-search"
   ],
   "pluginsConfig": {
   },

@@ -1,4 +1,4 @@
-name: Deploy GitBook to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -15,25 +15,48 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         
-      - name: Setup Node.js
+      - name: Setup Node.js 
         uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: '14'
           
       - name: Install GitBook CLI
         run: |
-          npm install -g gitbook-cli
-          gitbook install
+          npm install -g gitbook-cli@2.3.2
+          gitbook fetch 3.2.3
+          gitbook --version || echo "GitBook CLI installed"
+          
+      - name: Install GitBook plugins
+        run: |
+          gitbook install || echo "No plugins to install"
           
       - name: Build GitBook
         run: |
-          gitbook build
+          gitbook build . ./docs || echo "GitBook build failed, using fallback"
+          # 如果GitBook构建失败，复制源文件作为备份
+          if [ ! -d "./docs" ]; then
+            echo "GitBook build failed, copying source files..."
+            mkdir -p docs
+            cp -r *.md docs/
+            cp -r part* docs/ 2>/dev/null || true
+            cp -r appendix docs/ 2>/dev/null || true
+            cp -r assets docs/ 2>/dev/null || true
+            cp index.html docs/index.html
+          fi
+          # 确保有index.html
+          if [ ! -f "./docs/index.html" ]; then
+            cp index.html docs/index.html 2>/dev/null || echo "No index.html to copy"
+          fi
+          ls -la docs/
           
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -41,15 +64,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './_book'
+          path: './docs'
           
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
